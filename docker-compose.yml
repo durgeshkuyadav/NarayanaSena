@@ -1,0 +1,32 @@
+services:
+  backend:
+    image: narayansenacrdy.azurecr.io/narayansena-backend:v1
+    container_name: backend
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://durgesh-server.mysql.database.azure.com:3306/payment_orders?useSSL=true&requireSSL=true
+      SPRING_DATASOURCE_USERNAME: rootdurgesh
+      SPRING_DATASOURCE_PASSWORD: Root123
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+      SERVER_PORT: 8090
+    ports:
+      - "8090:8090"
+    networks:
+      - payment-net
+
+  frontend:
+    image: narayansenacrdy.azurecr.io/narayansena-frontend:v1
+    container_name: frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - payment-net
+
+networks:
+  payment-net:
+    driver: bridge
