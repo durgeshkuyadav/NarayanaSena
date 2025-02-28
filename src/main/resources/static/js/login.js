@@ -1,5 +1,6 @@
+const API_BASE_URL = "https://narayansena-backend-dy-eqgzhsd3dehddfgc.eastasia-01.azurewebsites.net/api";
+
 document.addEventListener('DOMContentLoaded', () => {
-const API_BASE_URL = "https://narayansena-backend-dy-eqgzhsd3dehddfgc.eastasia-01.azurewebsites.net";
     const loginForm = document.getElementById('loginForm');
     const responseMessage = document.getElementById('responseMessage');
 
@@ -10,12 +11,12 @@ const API_BASE_URL = "https://narayansena-backend-dy-eqgzhsd3dehddfgc.eastasia-0
             const password = document.getElementById('loginPassword').value.trim();
 
             try {
-             const response = await fetch(`${API_BASE_URL}/api/users/login`, {
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
-                 body: JSON.stringify({ email, password }),
-                 credentials: 'include'
-             });
+                const response = await fetch(`${API_BASE_URL}/users/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                    credentials: 'include'
+                });
 
                 let result;
                 try {
@@ -24,13 +25,11 @@ const API_BASE_URL = "https://narayansena-backend-dy-eqgzhsd3dehddfgc.eastasia-0
                     throw new Error('Failed to parse response');
                 }
 
-                // Handle success or error response
                 if (response.ok) {
                     responseMessage.innerHTML = `<p style="color: green;">${result.message || 'Login successful!'}</p>`;
                     sessionStorage.setItem('isLoggedIn', 'true');
-                    sessionStorage.setItem('userId', result.userId); // Store userId in sessionStorage
-                    console.log('Stored userId in sessionStorage:', result.userId); // Log for debugging
-                    window.location.href = 'index.html'; // Redirect to homepage
+                    sessionStorage.setItem('userId', result.userId);
+                    window.location.href = 'index.html';
                 } else {
                     responseMessage.innerHTML = `<p style="color: red;">Login failed: ${result.message || 'Invalid credentials'}</p>`;
                 }

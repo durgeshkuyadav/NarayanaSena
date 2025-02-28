@@ -1,4 +1,5 @@
 let globalUserDetails = null;
+const API_BASE_URL = "https://narayansena-backend-dy-eqgzhsd3dehddfgc.eastasia-01.azurewebsites.net";
 
 document.addEventListener('DOMContentLoaded', () => {
     const userId = getQueryParam('userId') || sessionStorage.getItem('userId');
@@ -15,7 +16,7 @@ function getQueryParam(param) {
 
 async function fetchUserDetails(userId) {
     try {
-        const response = await fetch(`http://localhost:8090/api/users/${userId}`, {
+       const response = await fetch('${API_BASE_URL}/api/users/${userId}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'

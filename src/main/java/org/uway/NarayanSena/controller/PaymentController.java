@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.logging.Logger;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {

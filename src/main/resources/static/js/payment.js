@@ -1,17 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
     const paymentForm = document.getElementById('paymentForm');
 
-    // Function to get query parameter from URL
     function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
     }
-const API_BASE_URL = "https://narayansena-backend-dy-eqgzhsd3dehddfgc.eastasia-01.azurewebsites.net";
-    const userId = getQueryParam('userId'); // Retrieve userId from URL
-    console.log('userId from URL:', userId); // Log userId for debugging
+
+    const API_BASE_URL = "https://narayansena-backend-dy-eqgzhsd3dehddfgc.eastasia-01.azurewebsites.net";
+    const userId = getQueryParam('userId');
+    console.log('userId from URL:', userId);
 
     if (!userId) {
-        alert('User ID is not set. Please try again.');
+        alert('User ID is not set. Redirecting to login...');
+        window.location.href = 'login.html';
         return;
     }
 
@@ -21,17 +22,15 @@ const API_BASE_URL = "https://narayansena-backend-dy-eqgzhsd3dehddfgc.eastasia-0
             const amount = document.getElementById('amount').value;
 
             try {
-                const response = await fetch('${API_BASE_URL}/api/payment/create?userId=' + userId, {
+                const response = await fetch(`${API_BASE_URL}/api/payment/create?userId=${userId}`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ amount })
                 });
 
                 if (response.ok) {
                     const result = await response.json();
-                    console.log('Order Creation Response:', result); // Log order creation response
+                    console.log('Order Creation Response:', result);
 
                     const options = {
                         "key": "rzp_test_AIEfgCrKyUEdo8",
@@ -43,28 +42,19 @@ const API_BASE_URL = "https://narayansena-backend-dy-eqgzhsd3dehddfgc.eastasia-0
                         "handler": async function (response) {
                             console.log("Payment ID: ", response.razorpay_payment_id);
 
-                            // Save payment details to localStorage
                             const paymentDetails = {
                                 orderId: result.id,
                                 paymentId: response.razorpay_payment_id,
                                 amountPaid: result.amount / 100
                             };
-                            console.log('Saving payment details to localStorage:', paymentDetails); // Log payment details before saving
+                            console.log('Saving payment details:', paymentDetails);
 
                             try {
-                                // Save to localStorage
-                                localStorage.setItem('paymentDetails', JSON.stringify(paymentDetails));
+                                sessionStorage.setItem('paymentDetails', JSON.stringify(paymentDetails));
 
-                                // Verify if data is saved in localStorage
-                                const storedDetails = localStorage.getItem('paymentDetails');
-                                console.log('Stored payment details:', storedDetails); // Verify data in localStorage
-
-                                // Payment update in the backend after success
-                                const updateResponse = await fetch('${API_BASE_URL}/api/payment/update', {
+                                const updateResponse = await fetch(`${API_BASE_URL}/api/payment/update`, {
                                     method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
+                                    headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({
                                         orderId: result.id,
                                         paymentId: response.razorpay_payment_id,
@@ -76,31 +66,32 @@ const API_BASE_URL = "https://narayansena-backend-dy-eqgzhsd3dehddfgc.eastasia-0
                                     const errorData = await updateResponse.text();
                                     console.error('Error updating payment:', errorData);
                                 } else {
-                                    const updateText = await updateResponse.text();
-                                    console.log('Payment Update Response:', updateText); // Log payment update response
+                                    const updateData = await updateResponse.json();
+                                    console.log('Payment Update Response:', updateData);
                                 }
-
                             } catch (error) {
                                 console.error('Error saving payment details:', error);
                             }
 
-                            // Ensure the redirect happens after the payment details are saved
                             setTimeout(() => {
-                                window.location.href = 'success.html'; // Redirect to success page after saving details
-                            }, 1000); // Delay the redirect slightly to ensure data is saved
+                                window.location.href = 'success.html';
+                            }, 1000);
                         },
                         "prefill": {
                             "name": "Your Name",
                             "email": "Your Email",
                             "contact": "Your Contact Number"
                         },
-                        "theme": {
-                            "color": "#3399cc"
+                        "theme": { "color": "#3399cc" },
+                        "modal": {
+                            "ondismiss": function() {
+                                alert("Payment process was interrupted. Please try again.");
+                            }
                         }
                     };
 
                     const rzp1 = new Razorpay(options);
-                    rzp1.open(); // Open the Razorpay payment gateway
+                    rzp1.open();
                 } else {
                     const errorData = await response.text();
                     console.error('Error:', errorData);

@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {

@@ -7,6 +7,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.uway.NarayanSena.services.CorsService;
 import java.util.List;
+
 @Configuration
 public class CorsConfig {
 
@@ -22,10 +23,14 @@ public class CorsConfig {
 
         // Get allowed origins from CorsService
         List<String> allowedOrigins = corsService.getAllowedOrigins();
-        System.out.println("Allowed Origins: " + allowedOrigins);//debugging line
+        List<String> allowedPatterns = corsService.getAllowedOriginPatterns();
 
-        // Dynamically fetch allowed origins from CorsService
-        corsConfiguration.setAllowedOrigins(corsService.getAllowedOrigins());
+        System.out.println("Allowed Origins: " + allowedOrigins); // Debugging
+        System.out.println("Allowed Origin Patterns: " + allowedPatterns); // Debugging
+
+        corsConfiguration.setAllowedOrigins(allowedOrigins);
+        corsConfiguration.setAllowedOriginPatterns(allowedPatterns); // ✅ This allows wildcard origins
+
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.setAllowCredentials(true);

@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
     }
-
+const API_BASE_URL = "https://narayansena-backend-dy-eqgzhsd3dehddfgc.eastasia-01.azurewebsites.net";
     const userId = getQueryParam('userId'); // Retrieve userId from URL
     console.log('userId from URL:', userId); // Log userId for debugging
 
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const amount = document.getElementById('amount').value;
 
             try {
-                const response = await fetch('http://localhost:8090/api/payment/create?userId=' + userId, {
+                const response = await fetch('${API_BASE_URL}/api/payment/create?userId=' + userId, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 console.log('Stored payment details:', storedDetails); // Verify data in localStorage
 
                                 // Payment update in the backend after success
-                                const updateResponse = await fetch('http://localhost:8090/api/payment/update', {
+                                const updateResponse = await fetch('${API_BASE_URL}/api/payment/update', {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json'

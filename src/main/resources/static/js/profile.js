@@ -16,7 +16,7 @@ function getQueryParam(param) {
 
 async function fetchUserDetails(userId) {
     try {
-       const response = await fetch('${API_BASE_URL}/api/users/${userId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/users/${userId}`, { // Fixed backticks
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'
@@ -32,6 +32,7 @@ async function fetchUserDetails(userId) {
         showMessage(`Error fetching details: ${error.message}`, 'error');
     }
 }
+
 
 function displayUserDetails(userDetails) {
     const userDetailsDiv = document.getElementById('user-details');

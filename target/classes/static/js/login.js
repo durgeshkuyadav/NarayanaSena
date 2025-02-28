@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+const API_BASE_URL = "https://narayansena-backend-dy-eqgzhsd3dehddfgc.eastasia-01.azurewebsites.net";
     const loginForm = document.getElementById('loginForm');
     const responseMessage = document.getElementById('responseMessage');
 
@@ -9,12 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const password = document.getElementById('loginPassword').value.trim();
 
             try {
-                const response = await fetch('http://localhost:8090/api/users/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password }),
-                    credentials: 'include'
-                });
+             const response = await fetch(`${API_BASE_URL}/api/users/login`, {
+                 method: 'POST',
+                 headers: { 'Content-Type': 'application/json' },
+                 body: JSON.stringify({ email, password }),
+                 credentials: 'include'
+             });
 
                 let result;
                 try {

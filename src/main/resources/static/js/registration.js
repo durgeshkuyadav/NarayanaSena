@@ -104,22 +104,32 @@ mobileInput.addEventListener('input', () => {
 
 // **Check referrer validity**
 referrerInput.addEventListener('blur', async () => {
-    if (referrerInput.value.trim()) {
+    const referrerId = referrerInput.value.trim();
+    if (!referrerId) return; // Skip if empty
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/users/check-referrer/${referrerId}`);
+
+        // Handle empty or unexpected responses
+        let data;
         try {
-            const response = await fetch(`${API_BASE_URL}/api/users/check-referrer/${referrerInput.value.trim()}`);
-            const data = await response.json();
-            if (response.ok) {
-                referrerInput.classList.add('is-valid');
-                referrerInput.classList.remove('is-invalid');
-                responseMessage.innerHTML = `<p class="text-success">${data.message}</p>`;
-            } else {
-                referrerInput.classList.add('is-invalid');
-                referrerInput.classList.remove('is-valid');
-                responseMessage.innerHTML = `<p class="text-danger">${data.error}</p>`;
-            }
+            data = await response.json();
         } catch (error) {
-            console.error('Error checking referrer:', error);
-            responseMessage.innerHTML = `<p class="text-danger">Error verifying Referrer ID. Please try again later.</p>`;
+            data = { error: "Unexpected server response" };
         }
+
+        if (response.ok) {
+            referrerInput.classList.add('is-valid');
+            referrerInput.classList.remove('is-invalid');
+            responseMessage.innerHTML = `<p class="text-success">${data.message || "Referrer ID is valid."}</p>`;
+        } else {
+            referrerInput.classList.add('is-invalid');
+            referrerInput.classList.remove('is-valid');
+            responseMessage.innerHTML = `<p class="text-danger">${data.error || "Invalid Referrer ID."}</p>`;
+        }
+    } catch (error) {
+        console.error('Error checking referrer:', error);
+        responseMessage.innerHTML = `<p class="text-danger">Error verifying Referrer ID. Please try again later.</p>`;
     }
 });
+
